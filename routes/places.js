@@ -52,6 +52,43 @@ router.get("/:id", function(req, res){
     });
 });
 
+// EDIT PLACE ROUTE
+router.get("/:id/edit", checkPlaceOwnership, function(req, res){
+    Place.findById(req.params.id, function(err, place){
+        if(err){
+            console.log(err);
+            res.redirect("/places")
+        } else {
+            res.render("places/edit", {place:place});
+        }
+    })
+})
+
+// UPDATE PLACE ROUTE
+router.put("/:id", checkPlaceOwnership, function(req, res){
+    // find and update the correct place
+    Place.findByIdAndUpdate(req.params.id, req.body.place, function(err, place){
+        if(err){
+            console.log(err);
+            res.redirect("/places");
+        } else {
+            res.redirect("/places/"+req.params.id);
+        }
+    });
+});
+
+// DESTORY PLACE ROUTE
+router.delete("/:id", checkPlaceOwnership, function(req, res){
+    Place.findByIdAndRemove(req.params.id, function(err){
+        if(err){
+            console.log(err);
+            res.redirect("/places");
+        } else {
+            res.redirect("/places");
+        }
+    }) 
+});
+
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next();
@@ -59,4 +96,28 @@ function isLoggedIn(req, res, next){
     res.redirect("/login");
 }
 
+function checkPlaceOwnership(req, res, next){
+    // is user logged in? 
+    if(req.isAuthenticated()){
+        Place.findById(req.params.id, function(err, place){
+            if(err){
+                console.log(err);
+                res.redirect("back")
+            } else {
+                // place.author.id: mongoose.Schema.Types.ObjectId
+                // req.user._id: String
+                // does user own the place?  
+                if(place.author.id.equals(req.user._id)) {
+                    next();
+                // otherwise, redirect
+                } else {
+                    res.redirect("back");
+                }
+            }
+        })
+    // if not, redirect 
+    } else {
+        res.redirect("back");
+    }
+}
 module.exports = router;

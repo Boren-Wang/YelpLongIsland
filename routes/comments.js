@@ -39,6 +39,37 @@ router.post("", isLoggedIn, function(req, res){
     });
 });
 
+
+router.get("/:comment_id/edit", checkCommentOwnership, function(req, res){
+    Comment.findById(req.params.comment_id, function(err, comment){
+        if(err){
+            res.redirect("back");
+        } else {
+            res.render("comments/edit", {place_id: req.params.id, comment: comment});
+        }
+    });
+});
+
+router.put("/:comment_id", checkCommentOwnership, function(req, res){
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, comment){
+        if(err){
+            res.redirect("back");
+        } else {
+            res.redirect("/places/"+req.params.id);
+        }
+    });
+});
+
+router.delete("/:comment_id", checkCommentOwnership, function(req, res){
+    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+        if(err){
+            res.redirect("back");
+        } else {
+            res.redirect("/places/"+req.params.id);
+        }
+    });
+});
+
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next();
@@ -46,4 +77,28 @@ function isLoggedIn(req, res, next){
     res.redirect("/login");
 }
 
+function checkCommentOwnership(req, res, next){
+    // is user logged in? 
+    if(req.isAuthenticated()){
+        Comment.findById(req.params.comment_id, function(err, comment){
+            if(err){
+                console.log(err);
+                res.redirect("back")
+            } else {
+                // comment.author.id: mongoose.Schema.Types.ObjectId
+                // req.user._id: String
+                // does user own the comment?  
+                if(comment.author.id.equals(req.user._id)) {
+                    next();
+                // otherwise, redirect
+                } else {
+                    res.redirect("back");
+                }
+            }
+        })
+    // if not, redirect 
+    } else {
+        res.redirect("back");
+    }
+}
 module.exports = router;

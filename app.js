@@ -4,6 +4,7 @@ var express = require("express"),
     mongoose = require("mongoose"),
     passport = require("passport"),
     LocalStrategy = require("passport-local"),
+    methodOverride = require("method-override"); // used for update and delete route
     Place = require("./models/place"),
     Comment = require("./models/comment"),
     User = require("./models/user"),
@@ -17,7 +18,8 @@ var commentRoutes = require("./routes/comments"),
 mongoose.connect("mongodb://localhost/yelp_long_island", {useNewUrlParser: true, useUnifiedTopology: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs")
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/public")); // serve all files inside of the public
+app.use(methodOverride("_method")); // used for update and delete route
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({

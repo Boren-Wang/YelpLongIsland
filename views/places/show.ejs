@@ -19,6 +19,12 @@
                     <p>
                         <em>Submitted By <%= place.author.username %></em>
                     </p>
+                    <% if(currentUser && place.author.id.equals(currentUser._id)) { %>
+                        <a class="btn btn-xs btn-warning" href="/places/<%=place._id%>/edit">Edit</a>
+                        <form id="delete-form" action="/places/<%=place._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-xs btn-danger">Delete</button>
+                        </form>
+                    <% } %>
                 </div>
             </div>
             <div class="well">
@@ -32,6 +38,16 @@
                                 <Strong><%= comment.author.username %></Strong>
                                 <span class="pull-right">10 days ago</span>
                                 <p><%= comment.text %></p>
+                                <% if(currentUser && comment.author.id.equals(currentUser._id)){%>
+                                <a 
+                                    class="btn btn-xs btn-warning" 
+                                    href="/places/<%=place._id%>/comments/<%=comment._id%>/edit">
+                                    Edit
+                                </a>
+                                <form id="delete-form" action="/places/<%=place._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
+                                    <button class="btn btn-xs btn-danger">Delete</button>
+                                </form>
+                                <% } %>
                         </div>
                     </div>
                 <% }) %>
