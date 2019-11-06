@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var Place = require("../models/place");
 var Comment = require("../models/comment");
+var middleware = require("../middleware"); // automatically require content of index.js
 
 router.get("/", function(req, res){
     // get all places from DB
@@ -14,7 +15,7 @@ router.get("/", function(req, res){
     })
 });
 
-router.post("/", isLoggedIn, function(req, res){
+router.post("/", middleware.isLoggedIn, function(req, res){
     // get data from the form
     var name = req.body.name
     var image = req.body.image 
@@ -35,7 +36,7 @@ router.post("/", isLoggedIn, function(req, res){
     });
 });
 
-router.get("/new", isLoggedIn, function(req, res){
+router.get("/new", middleware.isLoggedIn, function(req, res){
     res.render("places/new");
 });
 
@@ -45,7 +46,6 @@ router.get("/:id", function(req, res){
         if(err){
             console.log(err);
         }else{
-            console.log(foundPlace);
             // render show template with that place
             res.render("places/show", {place: foundPlace});
         }
@@ -53,7 +53,7 @@ router.get("/:id", function(req, res){
 });
 
 // EDIT PLACE ROUTE
-router.get("/:id/edit", checkPlaceOwnership, function(req, res){
+router.get("/:id/edit", middleware.checkPlaceOwnership, function(req, res){
     Place.findById(req.params.id, function(err, place){
         if(err){
             console.log(err);
@@ -65,7 +65,7 @@ router.get("/:id/edit", checkPlaceOwnership, function(req, res){
 })
 
 // UPDATE PLACE ROUTE
-router.put("/:id", checkPlaceOwnership, function(req, res){
+router.put("/:id", middleware.checkPlaceOwnership, function(req, res){
     // find and update the correct place
     Place.findByIdAndUpdate(req.params.id, req.body.place, function(err, place){
         if(err){
@@ -78,7 +78,7 @@ router.put("/:id", checkPlaceOwnership, function(req, res){
 });
 
 // DESTORY PLACE ROUTE
-router.delete("/:id", checkPlaceOwnership, function(req, res){
+router.delete("/:id", middleware.checkPlaceOwnership, function(req, res){
     Place.findByIdAndRemove(req.params.id, function(err){
         if(err){
             console.log(err);
@@ -89,35 +89,35 @@ router.delete("/:id", checkPlaceOwnership, function(req, res){
     }) 
 });
 
-function isLoggedIn(req, res, next){
-    if(req.isAuthenticated()){
-        return next();
-    } 
-    res.redirect("/login");
-}
+// function isLoggedIn(req, res, next){
+//     if(req.isAuthenticated()){
+//         return next();
+//     } 
+//     res.redirect("/login");
+// }
 
-function checkPlaceOwnership(req, res, next){
-    // is user logged in? 
-    if(req.isAuthenticated()){
-        Place.findById(req.params.id, function(err, place){
-            if(err){
-                console.log(err);
-                res.redirect("back")
-            } else {
-                // place.author.id: mongoose.Schema.Types.ObjectId
-                // req.user._id: String
-                // does user own the place?  
-                if(place.author.id.equals(req.user._id)) {
-                    next();
-                // otherwise, redirect
-                } else {
-                    res.redirect("back");
-                }
-            }
-        })
-    // if not, redirect 
-    } else {
-        res.redirect("back");
-    }
-}
+// function checkPlaceOwnership(req, res, next){
+//     // is user logged in? 
+//     if(req.isAuthenticated()){
+//         Place.findById(req.params.id, function(err, place){
+//             if(err){
+//                 console.log(err);
+//                 res.redirect("back")
+//             } else {
+//                 // place.author.id: mongoose.Schema.Types.ObjectId
+//                 // req.user._id: String
+//                 // does user own the place?  
+//                 if(place.author.id.equals(req.user._id)) {
+//                     next();
+//                 // otherwise, redirect
+//                 } else {
+//                     res.redirect("back");
+//                 }
+//             }
+//         })
+//     // if not, redirect 
+//     } else {
+//         res.redirect("back");
+//     }
+// }
 module.exports = router;
