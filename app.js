@@ -16,8 +16,8 @@ var commentRoutes = require("./routes/comments"),
     indexRoutes = require("./routes/index");
 
 // seedDB();
-// mongoose.connect("mongodb://localhost/yelp_long_island", {useNewUrlParser: true, useUnifiedTopology: true});
-mongoose.connect("mongodb+srv://Boren:971015@yelplongisland-z9xcq.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true});
+var databaseUrl = process.env.DATABASEURL || "mongodb://localhost/yelp_long_island";
+mongoose.connect(databaseUrl, {useNewUrlParser: true, useUnifiedTopology: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs")
 app.use(express.static(__dirname + "/public")); // serve all files inside of the public
@@ -47,10 +47,7 @@ app.use(indexRoutes);
 app.use("/places", placeRoutes);
 app.use("/places/:id/comments", commentRoutes);
 
-// app.listen(3000, process.env.IP, function(){
-//     console.log("YelpLongIsland Has Started!")
-// });
-
-app.listen(process.env.port, process.env.IP, function(){
+var port = process.env.PORT || 8080;
+app.listen(port, process.env.IP, function(){
     console.log("YelpLongIsland Has Started!")
 });
