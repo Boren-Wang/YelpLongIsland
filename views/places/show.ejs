@@ -13,7 +13,11 @@
             <div class="thumbnail">
                 <img class="img-responsive" src="<%= place.image %>">
                 <div class="caption-full">
-                    <h4 class="pull-right">$9.00/night</h4>
+                    <% if(place.price) { %>
+                        <h4 class="pull-right">$<%=place.price%></h4>
+                    <% } else { %>
+                        <h4 id="free" class="pull-right">Free</h4>
+                    <% } %>
                     <h1><a href="#"><%=place.name%></a></h1>
                     <p><%=place.description%></p>
                     <p>

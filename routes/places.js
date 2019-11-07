@@ -17,14 +17,15 @@ router.get("/", function(req, res){
 
 router.post("/", middleware.isLoggedIn, function(req, res){
     // get data from the form
-    var name = req.body.name
-    var image = req.body.image 
-    var description = req.body.description 
+    var name = req.body.name;
+    var price = req.body.price;
+    var image = req.body.image;
+    var description = req.body.description; 
     var author = {
         id: req.user._id,
         username: req.user.username
-    }
-    var newPlace = {name: name, image: image, description: description, author: author};
+    };
+    var newPlace = {name: name, price: price, image: image, description: description, author: author};
     // create a new place and save to DB
     Place.create(newPlace, function(err, place){
         if(err){
