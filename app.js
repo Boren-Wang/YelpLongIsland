@@ -8,15 +8,16 @@ var express = require("express"),
     methodOverride = require("method-override"); // used for update and delete route
     Place = require("./models/place"),
     Comment = require("./models/comment"),
-    User = require("./models/user"),
-    seedDB = require("./others/seeds");
+    User = require("./models/user");
+    // seedDB = require("./others/seeds");
 
 var commentRoutes = require("./routes/comments"),
     placeRoutes = require("./routes/places"),
     indexRoutes = require("./routes/index");
 
 // seedDB();
-mongoose.connect("mongodb://localhost/yelp_long_island", {useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect("mongodb://localhost/yelp_long_island", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect("mongodb+srv://Boren:971015@yelplongisland-z9xcq.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs")
 app.use(express.static(__dirname + "/public")); // serve all files inside of the public
