@@ -28,9 +28,12 @@ router.post("/", middleware.isLoggedIn, function(req, res){
     // create a new place and save to DB
     Place.create(newPlace, function(err, place){
         if(err){
-            console.log(err);
+            // console.log(err);
+            req.flash("error", err.message);
+            res.redirect("back");
         } else {
             // redirect back to places page
+            req.flash("success", "Successfully created a new place!");
             res.redirect("/places");
         }
     });
