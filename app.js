@@ -46,6 +46,10 @@ app.use(indexRoutes);
 app.use("/places", placeRoutes);
 app.use("/places/:id/comments", commentRoutes);
 
-app.listen(3000, process.env.IP, function(){
+// app.listen(3000, process.env.IP, function(){
+//     console.log("YelpLongIsland Has Started!")
+// });
+
+app.listen(process.env.port, process.env.IP, function(){
     console.log("YelpLongIsland Has Started!")
 });
